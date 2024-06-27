@@ -25,6 +25,10 @@ const userSchema = new mongoose.Schema({
   //   type: String,
   //   required: true,
   // },
+  userType: {
+    type: String,
+    required: true,
+  },
 });
 
 userSchema.pre("save", async function (next) {
@@ -45,6 +49,8 @@ userSchema.methods.genJWT = function generateToken() {
     {
       _id: user._id,
       email: user.email,
+      userType: user.userType,
+      name : user.name,
     },
     process.env.JWT_SECRET,
     {

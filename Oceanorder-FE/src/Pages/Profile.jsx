@@ -1,10 +1,18 @@
 import React, { useState } from "react";
 import Personalinformation from "../Components/Personalinformation/Personalinformation";
 import OrderDetails from "../Components/OrderDetails/OrderDetails";
-import user from "../assets/Images/user.png"
+import user from "../assets/Images/user.png";
+import Cookies from "js-cookie";
 
 const Profile = () => {
   const [activeView, setActiveView] = useState("PersonalInfo");
+
+
+  const tokenValue=Cookies.get("token")
+      const decodedToken = JSON.parse(atob(tokenValue?.split('.')[1]));
+     
+  const userName = decodedToken.name;
+  
 
   const handleMenuClick = (id) => {
     setActiveView(id);
@@ -30,7 +38,7 @@ const Profile = () => {
                   src={user}
                   alt="Profile"
                 />
-                <h2 className="text-lg font-bold">Hii !! Username</h2>
+                <h2 className="text-lg font-bold">Hii !! {userName}</h2>
 
                 <nav className="mt-8">
                   <ul className="font-semibold">

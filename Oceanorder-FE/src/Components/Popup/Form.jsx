@@ -6,6 +6,10 @@ import { AiFillInstagram } from "react-icons/ai";
 import { BsYoutube } from "react-icons/bs";
 import { IoMdMail } from "react-icons/io";
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+import  Cookies  from "js-cookie";
+
+
 
 const Form = ({
   closeModalfun,
@@ -21,8 +25,15 @@ const Form = ({
     email: "",
     password: "",
     phone: "",
+    userType:"",
   });
-
+  // if(userData.userType === "vendor"){
+  //           useNavigate("/profile")
+  //         }
+  //    else if(userData.userType === "customer"){
+  //           useNavigate("/")
+  //         }
+ 
   useEffect(() => {
     if (showImmediate) {
       setShowModal(true);
@@ -42,7 +53,10 @@ const Form = ({
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUserData({ ...userData, [name]: value });
+    
   };
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -57,9 +71,12 @@ const Form = ({
           body: JSON.stringify({
             email: userData.email,
             password: userData.password,
+            
           }),
-        });
+          
+        }
 
+      );
         if (!response.ok) {
           let errorMessage = "Login failed";
           try {
@@ -70,14 +87,27 @@ const Form = ({
           }
           throw new Error(errorMessage);
         }
-
         const data = await response.json();
-        alert("Login successful!");
-        setUserData({
-          ...userData,
-          email: "",
-          password: "",
-        });
+        console.log(data.data);
+        // token from response body
+      // set token to the cookie
+      Cookies.set("token", data.data);
+      // decode token and extract userType from payload
+      const tokenValue=Cookies.get("token")
+      const decodedToken = JSON.parse(atob(tokenValue?.split('.')[1]));
+      const loginUserType = decodedToken.userType;
+      // execute conditional navigation
+// console.log(loginUserType)
+console.log(decodedToken.name);
+    
+           //conditional navigation..
+           if (loginUserType == "customer") {
+            navigate("/"); 
+          } else if (loginUserType =="vendor") {
+            navigate("/profile"); 
+          }
+       alert("Login successful!");
+         
         setShowModal(false);
         if (onSuccess) {
           onSuccess(data); 
@@ -91,12 +121,16 @@ const Form = ({
         const response = await axios.post('http://localhost:8080/api/v1/signup', userData);
         console.log('User signed up:', response.data);
         alert('User signed up successfully!');
+        
+     
         setUserData({
           name: "",
           email: "",
           password: "",
           phone: "",
+          userType:""
         });
+  //   
         setShowModal(false);
       } catch (error) {
         console.error('Error signing up:', error.response?.data || error.message);
@@ -115,6 +149,10 @@ const Form = ({
 
   const toggleSigninMode = () => {
     setShowSignin(!showSignin);
+    setUserData({
+      email: "",
+      password: "",
+    });
   };
 
   return (
@@ -253,6 +291,44 @@ const Form = ({
                           </div>
                         </>
                       )}
+{!showSignin && (
+                        <>
+<div className="flex mb-4">
+                            <div>
+                              <input
+                                type="radio"
+                                id="Customer-radio"
+                                name="userType"
+                                value="customer"
+                                onChange={handleChange}
+                              />
+                              <label
+                                htmlFor="Customer-radio"
+                                className="text-sm px-1 lg:text-base font-medium"
+                              >
+                                Customer
+                              </label>
+                            </div>
+                            <div className="ml-5">
+                              <input
+                                type="radio"
+                                id="Vendor-radio"
+                                name="userType"
+                                value="vendor"
+                                
+                                onChange={handleChange}
+                              />
+                              <label
+                                htmlFor="vendor-radio"
+                                className="text-sm px-1 lg:text-base font-medium"
+                              >
+                                Vendor
+                              </label>
+                            </div>
+                          </div> 
+                          </>
+)}        
+      
                       <div className="flex items-center justify-end p-2 rounded-b">
                         <button
                           className="w-1/3 rounded-md bg-slate-400 px-3 py-2 text-white focus:bg-gray-600 focus:outline-none mr-2"

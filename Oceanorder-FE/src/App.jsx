@@ -15,6 +15,9 @@ import Whatsapp from "./Components/Whatsapp/Whatsapp";
 import Footer from "./Components/Footer/Footer";
 import { AllProductData } from "../AllProductData";
 import ProductDetails from "./Pages/ProductDetails";
+import VendorDetails  from "./Components/VendorDetails/VendorDetails";
+import Vendor from "./Pages/Vendor";
+
 
 const App = () => {
   //  const products = [
@@ -120,6 +123,9 @@ const App = () => {
           element={<Cart cart={cart} deleteFromCart={deleteFromCart} />}
         />
         <Route path="/Profile" element={<Profile />} />
+        <Route path="/VendorDetails" element={<VendorDetails />} />
+        <Route path="/Vendor" element={<Vendor />} />
+
       </Routes>
       <Footer />
       <ScrollToTop />
